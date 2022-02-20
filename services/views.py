@@ -60,13 +60,13 @@ from datetime import datetime, timezone
 
 
 
-class Order(viewsets.ViewSet):#Place order
+class Order_Class(viewsets.ViewSet):#Place order
     # {
     #     "order_price": "farz.mirza@argonteq.com",
     #     "media_file": "MMMirza@1213AAA"
     # }
 
-    @action(detail=False,methods=['post'])
+    @action(detail=False,methods=['post','get'])
     def Place_order(self, request):
         if request.method == "POST":
             data=request.data
@@ -78,6 +78,11 @@ class Order(viewsets.ViewSet):#Place order
             else:
                 print(serializer.errors)
                 return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        if request.method == "GET":
+            all_order=Order.objects.all()
+            print(all_order)
+            serializer = OrderSerializer(all_order, many=True)
+            return Response({"AllProfiles": serializer.data})
 
 
 

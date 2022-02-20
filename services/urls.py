@@ -12,7 +12,7 @@ from .views import *
 
 
 router=routers.DefaultRouter()
-router.register(r'order', Order, 'Order')#Place order
+router.register(r'order', Order_Class, 'Order')#Place order
 
 # router.register(r'like_and_dislike', FRAZ, 'like_and_dislike')
 urlpatterns=[
