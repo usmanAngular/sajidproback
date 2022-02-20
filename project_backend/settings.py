@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'rest_framework_jwt',
     'corsheaders',
     'core',
+    'services',
         ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
