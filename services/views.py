@@ -12,6 +12,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.mail import EmailMessage
 from django.db import transaction, IntegrityError
 from google.auth.transport._http_client import Response
+# from numpy import all
 from rest_framework.utils import json
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
@@ -71,7 +72,7 @@ class Order_Class(viewsets.ViewSet):#Place order
         if request.method == "POST":
             data=request.data
             data['user']=request.user.id
-            serializer = OrderSerializer(data=data)
+            serializer = SaveOrderSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'Message': 'Successfully'}, status.HTTP_200_OK)
@@ -83,6 +84,29 @@ class Order_Class(viewsets.ViewSet):#Place order
             print(all_order)
             serializer = OrderSerializer(all_order, many=True)
             return Response({"AllProfiles": serializer.data})
+
+    @action(detail=False, methods=['get'])
+    def all_services(self, request):
+        all_services = Pricing.objects.all()
+        serializer = PricingSerializer(all_services, many=True)
+        return Response({"All Services": serializer.data})
+
+    @action(detail=False, methods=['post'])
+    def price_calulator(self, request):
+        if request.method == "POST":
+            pages=request.data['pages']
+            get_service = Pricing.objects.get(id=request.data['pricing'])
+            calculated_price=int(get_service.price)*int(pages)
+            return Response({"Service Price": calculated_price})
+
+
+
+
+
+
+
+
+
 
 
 

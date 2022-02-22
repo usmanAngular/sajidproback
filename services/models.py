@@ -48,6 +48,7 @@ class Pricing(models.Model):
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default='0')
     order_price=models.CharField(max_length=255)
+    total_pages = models.CharField(max_length=255, default='1')
     media_file=models.FileField(upload_to='media/order_media')
     topic=models.CharField(max_length=255)
     description=models.CharField(max_length=255)
