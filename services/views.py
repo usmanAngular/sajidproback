@@ -94,8 +94,8 @@ class Order_Class(viewsets.ViewSet):#Place order
     @action(detail=False, methods=['post'])
     def price_calulator(self, request):
         if request.method == "POST":
-            if "services_type_name" in request.data and "services_level_name" in request.data  and "paper_name" in request.data:
-                service_object=Pricing.objects.values_list('id', flat = True).filter(services_type__services_type_name=request.data['services_type_name'],services_level__services_level_name=request.data['services_level_name'],paper_type__paper_name=request.data['paper_name'])
+            if "services_type_name" in request.data and "services_level_name" in request.data  and "paper_name" in request.data and "deadline" in request.data:
+                service_object=Pricing.objects.values_list('id', flat = True).filter(services_type__services_type_name=request.data['services_type_name'],services_level__services_level_name=request.data['services_level_name'],paper_type__paper_name=request.data['paper_name'],deadline=request.data['deadline'])
                 if service_object.exists():
                     get_service = Pricing.objects.get(id=service_object[0])
                     pages=request.data['pages']

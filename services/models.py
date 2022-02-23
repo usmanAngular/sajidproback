@@ -33,10 +33,18 @@ class Paper_type(models.Model):
 
 
 class Pricing(models.Model):
+    days = (
+        ('2',  '2 Days'),
+        ('10', '10 Days'),
+        ('20', '20 Days'),
+        ('30', '30 Days'),
+    )
+
     services_type=models.ForeignKey(Services_Type,related_name='services_type', on_delete=models.CASCADE)
     services_level=models.ForeignKey(Services_Level,related_name='services_level', on_delete=models.CASCADE)
     paper_type=models.ForeignKey(Paper_type,related_name='paper_type', on_delete=models.CASCADE)
     price= models.CharField(max_length=255)
+    deadline = models.CharField(max_length=255,choices=days, default='2')
     is_active = models.BooleanField(default=True)
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
