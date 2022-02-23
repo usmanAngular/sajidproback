@@ -94,10 +94,20 @@ class Order_Class(viewsets.ViewSet):#Place order
     @action(detail=False, methods=['post'])
     def price_calulator(self, request):
         if request.method == "POST":
-            pages=request.data['pages']
-            get_service = Pricing.objects.get(id=request.data['pricing'])
-            calculated_price=int(get_service.price)*int(pages)
-            return Response({"Service Price": calculated_price})
+            if "services_type_name" in request.data and "services_level_name" in request.data  and "paper_name" in request.data:
+                service_object=Pricing.objects.values_list('id', flat = True).filter(services_type__services_type_name=request.data['services_type_name'],services_level__services_level_name=request.data['services_level_name'],paper_type__paper_name=request.data['paper_name'])
+                if service_object.exists():
+                    get_service = Pricing.objects.get(id=service_object[0])
+                    pages=request.data['pages']
+                    calculated_price=int(get_service.price)*int(pages)
+                    return Response({"Service Price": calculated_price})
+                else:
+
+                    return Response({"Message": "Not Found!!"},status=status.HTTP_404_NOT_FOUND)
+
+            return Response({"Error": "Missing Parameter"},status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
