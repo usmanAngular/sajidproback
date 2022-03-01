@@ -36,7 +36,7 @@ class OrderSerializer(serializers.ModelSerializer):
     pricing = PricingSerializer()
     class Meta:
         model=Order
-        fields= ["topic","total_pages","pricing"]
+        fields= ["topic","total_pages","actual_price","pricing"]
         # fields= "__all__"
         # extra_field=["services_type"]
 
@@ -50,13 +50,10 @@ class SaveOrderSerializer(serializers.ModelSerializer):
         fields= "__all__"
         # extra_field=["services_type"]
 
-
-
-
-
-
-
-
+class ChangeOrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Order
+        fields= "__all__"
 
 
 

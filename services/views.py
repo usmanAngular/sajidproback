@@ -49,6 +49,7 @@ from rest_framework.response import Response
 
 import core
 # from .serializers import *
+from .models import Coupen
 from .serializers import *
 from rest_framework import status, viewsets, mixins, generics, response
 from django.contrib.auth.models import User
@@ -67,7 +68,7 @@ class Order_Class(viewsets.ViewSet):#Place order
     #     "media_file": "MMMirza@1213AAA"
     # }
 
-    @action(detail=False,methods=['post','get'])
+    @action(detail=False,methods=['post','get','patch'])
     def Place_order(self, request):
         if request.method == "POST":
             data=request.data
@@ -84,7 +85,17 @@ class Order_Class(viewsets.ViewSet):#Place order
             print(all_order)
             serializer = OrderSerializer(all_order, many=True)
             return Response({"AllProfiles": serializer.data})
+        if request.method == "PATCH":
+            try:
+                order_obj = Order.objects.get(id=request.data['id'])
+            except Order.DoesNotExist:
+                return Response({"Message": "Order does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+            serializer = ChangeOrderStatusSerializer(order_obj, data={"order_status":"C"},partial=True)  # set partial=True to update a data partially
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'Message': 'Order Changed Successfully'}, status.HTTP_200_OK)
+            return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     @action(detail=False, methods=['get'])
     def all_services(self, request):
         all_services = Pricing.objects.all()
@@ -99,7 +110,20 @@ class Order_Class(viewsets.ViewSet):#Place order
                 if service_object.exists():
                     get_service = Pricing.objects.get(id=service_object[0])
                     pages=request.data['pages']
-                    calculated_price=int(get_service.price)*int(pages)
+                    calculated_price=float(get_service.price)*int(pages)
+                    print(calculated_price)
+                    if "coupen_code" in request.data:
+                        coupen_obejct = Coupen.objects.filter(coupen_code=request.data['coupen_code'])
+                        if (coupen_obejct).exists():
+                            if(coupen_obejct[0].coupen_percentage_price!=None):
+                                dis_per_price=coupen_obejct[0].coupen_percentage_price
+                                calculated_price = calculated_price - (calculated_price * float(dis_per_price) / 100)
+                                return Response({"Service Price": calculated_price})
+                            else:
+                                dis_fix_price=coupen_obejct[0].coupen_fixed_price
+                                calculated_price=calculated_price-float(dis_fix_price)
+                                return Response({"Service Price": calculated_price})
+                        return Response({"Message": "Invalid Coupen!!"}, status=status.HTTP_404_NOT_FOUND)
                     return Response({"Service Price": calculated_price})
                 else:
 
