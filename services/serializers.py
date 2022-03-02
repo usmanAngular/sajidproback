@@ -4,7 +4,8 @@ from rest_framework import serializers
 from core.models import User_Profile
 from rest_framework import serializers
 
-from services.models import Order, Pricing,Paper_type,Services_Level,Services_Type
+from services.models import Order, Pricing, Paper_type, Services_Level, Services_Type, Coupen
+
 
 class ServicesLevelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,4 +57,7 @@ class ChangeOrderStatusSerializer(serializers.ModelSerializer):
         fields= "__all__"
 
 
-
+class CoupenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Coupen
+        fields= "__all__"

@@ -1,3 +1,5 @@
+import base64
+import os
 import random
 import re
 import string
@@ -5,6 +7,8 @@ import string
 from datetime import datetime, tzinfo
 from datetime import timedelta
 import datetime
+from itertools import count
+
 from django.utils import timezone
 import requests
 from django.contrib.auth.decorators import login_required
@@ -132,7 +136,52 @@ class Order_Class(viewsets.ViewSet):#Place order
             return Response({"Error": "Missing Parameter"},status=status.HTTP_400_BAD_REQUEST)
 
 
+class Coupens(viewsets.ViewSet):#Place order
 
+    @action(detail=False,methods=['post','get','put'])
+    def create_coupen(self, request):
+        # {
+        #     "coupen_name": "fraz",
+        #     "coupen_percentage_price": "10"
+        # }
+        if request.method == "POST":
+            try:
+                def secure_rand(len=8):
+                    token = os.urandom(len)
+                    return base64.b64encode(token)
+
+                generated_code=secure_rand()
+                coupen_obj = Coupen.objects.get(~Q(coupen_code=generated_code))
+                data=request.data
+                data['coupen_code']=generated_code.decode(encoding="utf-8")
+                print(data)
+                serializer = CoupenSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"Message": "Coupen Code", "Code": generated_code}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+            except :
+                return Response({"Message":"Coupen Already Exist"},status=status.HTTP_404_NOT_FOUND)
+
+        if request.method == "GET":
+            all_coupens = Coupen.objects.filter(is_active=True)
+            serializer = CoupenSerializer(all_coupens, many=True)
+            return Response({"All Coupens": serializer.data})
+        if request.method == "PUT":
+            # {
+            #     "coupen_id": "1"
+            # }
+            try:
+                coupen_obj = Coupen.objects.get(id=request.data['coupen_id'])
+            except Coupens.DoesNotExist:
+                return Response({"Message": "Coupen does not exist"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = CoupenSerializer(coupen_obj, data={"is_active":False}, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'Message': 'Delete Coupen Successfully!'}, status.HTTP_200_OK)
+            else:
+                return Response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -13,6 +13,7 @@ from .views import *
 
 router=routers.DefaultRouter()
 router.register(r'order', Order_Class, 'Order')#Place order
+router.register(r'coupen', Coupens, 'Coupens')#Coupens Functionality
 
 # router.register(r'like_and_dislike', FRAZ, 'like_and_dislike')
 urlpatterns=[
