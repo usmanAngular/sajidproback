@@ -141,7 +141,7 @@ class Coupens(viewsets.ViewSet):#Place order
     @action(detail=False,methods=['post','get','put'])
     def create_coupen(self, request):
         # {
-        #     "coupen_name": "fraz",
+        #     "coupen_name": "testing",
         #     "coupen_percentage_price": "10"
         # }
         if request.method == "POST":

@@ -28,7 +28,7 @@ class PricingSerializer(serializers.ModelSerializer):
     paper_type=PaperTypeSerializer()
     class Meta:
         model=Pricing
-        fields= ["id","price","services_level","services_type","paper_type"]
+        fields= ["id","price","services_level","services_type","paper_type","deadline"]
         # fields= "__all__"
 
 
