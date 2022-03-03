@@ -95,7 +95,7 @@ class Order_Class(viewsets.ViewSet):#Place order
             except Order.DoesNotExist:
                 return Response({"Message": "Order does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-            serializer = ChangeOrderStatusSerializer(order_obj, data={"order_status":"C"},partial=True)  # set partial=True to update a data partially
+            serializer = ChangeOrderStatusSerializer(order_obj, data={"order_status":request.data['status']},partial=True)  # set partial=True to update a data partially
             if serializer.is_valid():
                 serializer.save()
                 return Response({'Message': 'Order Changed Successfully'}, status.HTTP_200_OK)
